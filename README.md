@@ -2,110 +2,111 @@
 
 ## 📌 Overview
 
-This project focuses on detecting fraudulent credit card transactions using machine learning. Since fraudulent transactions are significantly rarer than legitimate transactions, the project focuses not only on model performance but also on handling **class imbalance** and evaluating the model using appropriate classification metrics.
+This project builds a machine learning system for detecting fraudulent credit card transactions.
 
-The project covers the complete machine learning workflow, from data preprocessing and exploratory analysis to model comparison, evaluation, threshold analysis, and explainable AI.
+The main challenge in fraud detection is **class imbalance**, where legitimate transactions greatly outnumber fraudulent transactions. Because of this, accuracy alone is not a reliable measure of model performance.
+
+The project focuses on comparing multiple machine learning models, evaluating them using fraud-relevant metrics, optimizing the classification threshold, and selecting a final model based on the trade-off between detecting fraud and minimizing false positives.
 
 ## 🎯 Problem Statement
 
-Credit card fraud detection is a highly imbalanced classification problem where correctly identifying fraudulent transactions is more important than simply achieving high overall accuracy.
+The objective is to classify credit card transactions as either:
 
-The objective of this project is to build a machine learning model that can effectively distinguish between:
+* **0 → Legitimate**
+* **1 → Fraudulent**
 
-* **Legitimate transactions**
-* **Fraudulent transactions**
+The model should identify as many fraudulent transactions as possible while keeping false fraud alerts at a reasonable level.
 
 ## 📊 Dataset
 
-The project uses the **Credit Card Fraud Detection dataset**.
+The project uses the **Credit Card Fraud Detection dataset**, containing anonymized transaction features and a binary `Class` target.
 
-The dataset contains anonymized transaction features along with a `Class` target variable:
+The dataset contains a highly imbalanced distribution, making **Precision, Recall, F1-score and PR-AUC** particularly important evaluation metrics.
 
-* `0` → Legitimate transaction
-* `1` → Fraudulent transaction
-
-The dataset is not included in this repository because of its large file size.
+The dataset is not included in this repository because the file size exceeds GitHub's 100 MB limit.
 
 ## 🔧 Project Workflow
 
 ### 1. Data Exploration
 
-* Examined dataset structure and feature distributions
+* Examined the structure and distribution of the dataset
 * Checked for missing values
-* Analyzed the target-class distribution
-* Identified the severe class imbalance between legitimate and fraudulent transactions
+* Analyzed the target variable
+* Investigated the severe class imbalance
+* Examined feature distributions
 
 ### 2. Data Preprocessing
 
-* Checked and handled data quality issues
 * Separated features and target variable
-* Applied appropriate feature scaling
-* Prepared the data for machine learning models
+* Prepared the data for machine learning
+* Applied feature scaling where required
+* Split the dataset into training and testing sets
 
-### 3. Handling Class Imbalance
+### 3. Model Training
 
-Because fraudulent transactions represent only a small portion of the dataset, accuracy alone is not a reliable metric.
+Four models were evaluated:
 
-The project explores techniques for dealing with class imbalance and evaluates their effect on model performance.
+* Logistic Regression
+* Random Forest
+* XGBoost
+* Isolation Forest
 
-### 4. Model Training
+Both supervised and unsupervised approaches were considered for fraud detection.
 
-Multiple machine learning approaches were evaluated and compared to identify a suitable model for fraud detection.
+## 📈 Model Comparison
 
-### 5. Model Evaluation
+| Model               |  Precision |     Recall |         F1 |    ROC-AUC |     PR-AUC |
+| ------------------- | ---------: | ---------: | ---------: | ---------: | ---------: |
+| Logistic Regression |     0.8507 |     0.6000 |     0.7037 |     0.9586 |     0.6975 |
+| **Random Forest**   | **0.9571** | **0.7053** | **0.8121** | **0.9547** | **0.7898** |
+| XGBoost             |     0.7273 |     0.6737 |     0.6995 |     0.8572 |     0.6171 |
+| Isolation Forest    |     0.2097 |     0.2737 |     0.2374 |     0.9350 |     0.1092 |
 
-The models were evaluated using:
+### 🏆 Final Model: Random Forest
 
-* Precision
-* Recall
-* F1-score
-* ROC-AUC
-* Confusion Matrix
+Random Forest was selected as the final model because it achieved the **highest F1-score (0.8121)** and **highest PR-AUC (0.7898)** among the evaluated models.
 
-Special attention was given to **Recall**, since failing to detect an actual fraudulent transaction can be costly.
+It also achieved a strong **precision of 0.9571**, meaning that most transactions predicted as fraudulent were actually fraudulent.
 
-### 6. Threshold Analysis
+Its recall of **0.7053** means the model successfully detected approximately 70.5% of the fraudulent transactions in the evaluated dataset.
 
-Different classification thresholds were evaluated to understand the trade-off between precision and recall.
+## 🎚️ Threshold Optimization
 
-This helps determine a threshold that provides a practical balance between:
+Instead of relying only on the default classification threshold of 0.5, different thresholds were investigated to understand the relationship between precision and recall.
 
-* Detecting more fraudulent transactions
-* Avoiding excessive false positives
+A threshold of **0.4** was evaluated for the Random Forest model.
 
-### 7. Explainable AI
+### Confusion Matrix at Threshold 0.4
 
-SHAP-based analysis was used to investigate feature contributions and improve the interpretability of the model's predictions.
+|                       | Predicted Legitimate | Predicted Fraud |
+| --------------------- | -------------------: | --------------: |
+| **Actual Legitimate** |               56,646 |               5 |
+| **Actual Fraud**      |                   26 |              69 |
 
-This helps answer:
+This resulted in:
 
-> **Why did the model classify this transaction as potentially fraudulent?**
+* **56,646 True Negatives**
+* **5 False Positives**
+* **26 False Negatives**
+* **69 True Positives**
 
-## 📈 Results
-
-The final model was selected based on its ability to detect fraudulent transactions while maintaining a reasonable balance between precision and recall.
-
-### Key Evaluation Metrics
-
-| Metric    |          Result |
-| --------- | --------------: |
-| Precision | Add final value |
-| Recall    | Add final value |
-| F1-Score  | Add final value |
-| ROC-AUC   | Add final value |
+At this threshold, the model identifies a large proportion of fraudulent transactions while producing very few false fraud alerts.
 
 ## 🧠 Key Learnings
 
-Through this project, I explored:
+This project provided practical experience with:
 
-* Imbalanced classification problems
-* Data preprocessing and feature scaling
-* Precision vs. recall trade-offs
-* Classification threshold optimization
+* Highly imbalanced classification
+* Fraud detection
+* Data preprocessing
+* Feature scaling
 * Model comparison
+* Precision vs. Recall trade-offs
+* F1-score and PR-AUC
+* ROC-AUC evaluation
 * Confusion matrix analysis
-* Explainable AI using SHAP
-* Practical considerations in fraud detection
+* Classification threshold optimization
+* Supervised vs. unsupervised fraud detection
 
 ## 🛠️ Technologies Used
 
@@ -116,8 +117,6 @@ Through this project, I explored:
 * Seaborn
 * Scikit-learn
 * XGBoost
-* Imbalanced-learn
-* SHAP
 * Jupyter Notebook
 
 ## 📁 Repository Structure
@@ -130,18 +129,16 @@ Fraud-detection/
 └── .gitignore
 ```
 
-The dataset is intentionally excluded from the repository because of its size.
+The dataset is excluded from the repository because of its size.
 
 ## 🚀 Future Improvements
 
-Possible future improvements include:
-
-* Hyperparameter optimization
-* More extensive imbalance-handling experiments
+* Hyperparameter tuning of the Random Forest model
+* Further threshold optimization based on business costs
 * Cost-sensitive learning
-* Real-time fraud detection pipeline
+* Additional imbalance-handling techniques
 * Model monitoring and drift detection
-* Deployment through an API or web application
+* Deployment as a real-time fraud detection API
 
 ## 👩‍💻 Author
 
